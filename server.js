@@ -11,7 +11,7 @@ const HOST = process.env.HOST || 'localhost';
 const app = express();
 
 app.get('/', (req, res) => {
-  return res.send(`Hello World`);
+  return res.send(`Hello World && To be or not to be`);
 });
 
 app.listen(PORT);
