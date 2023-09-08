@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:12 as development
+FROM mhart/alpine-node:18 as development
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -16,20 +16,20 @@ COPY . .
 EXPOSE 8080
 CMD [ "node", "server.js" ]
 
-FROM mhart/alpine-node:12 as test
+FROM mhart/alpine-node:18 as test
 WORKDIR /usr/src/app
 COPY --from=development /usr/src/app/ .
 RUN ["npm", "run", "test"]
 
 
-FROM mhart/alpine-node:12 as production
+FROM mhart/alpine-node:18 as production
 
 # Create app directory
 WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm ci --production
+RUN npm ci --only=production
 # If you are building your code for production
 # RUN npm ci --only=production
 
