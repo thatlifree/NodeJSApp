@@ -23,19 +23,17 @@ jobs:
       - name: Checkout to the branch
         uses: actions/checkout@v2
 
-      - name: Azure Login
-        uses: azure/login@v1
+      - uses: azure/docker-login@v1
         with:
-          client-id: ${{ secrets.NODEJSAPP_AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.NODEJSAPP_AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.NODEJSAPP_AZURE_SUBSCRIPTION_ID }}
+          login-server: ${{ secrets.ACR_ENDPOINT }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build and push container image to registry
-        uses: docker/build-push-action@v2
-         with:
-          push: true
-          build-args: |
-            version=${{ steps.tag.outputs.tag }}
-          tags: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
-
-
+        env:
+          CONTAINER_REGISTRY: ${{ secrets.ACR_ENDPOINT }}
+          CONTAINER_REGISTRY_REPOSITORY: NodeJSAppExample
+          IMAGE_TAG: NodeJSAppExample-${{ env.GITHUB_RUN_ID }}
+        run: | 
+          docker build -t $CONTAINER_REGISTRY/$CONTAINER_REGISTRY_REPOSITORY:$IMAGE_TAG .
+          docker push $CONTAINER_REGISTRY/$CONTAINER_REGISTRY_REPOSITORY:$IMAGE_TAG
