@@ -1,0 +1,41 @@
+name: Trigger auto deployment for nodejsapp
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ master ]
+    paths:
+    - '**'
+    - '.github/workflows/nodejsapp-AutoDeployTrigger-392d49df-4dcf-40f2-bb9f-8a043af209af.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.NODEJSAPP_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.NODEJSAPP_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.NODEJSAPP_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v2
+         with:
+          push: true
+          build-args: |
+            version=${{ steps.tag.outputs.tag }}
+          tags: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+
+
