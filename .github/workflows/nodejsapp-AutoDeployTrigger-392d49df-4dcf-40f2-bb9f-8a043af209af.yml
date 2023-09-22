@@ -32,7 +32,7 @@ jobs:
       - name: Build and push container image to registry
         env:
           CONTAINER_REGISTRY: ${{ secrets.ACR_ENDPOINT }}
-          CONTAINER_REGISTRY_REPOSITORY: NodeJSAppExample
+          CONTAINER_REGISTRY_REPOSITORY: app
           IMAGE_TAG: NodeJSAppExample-${{ env.GITHUB_RUN_ID }}
         run: | 
           docker build -t $CONTAINER_REGISTRY/$CONTAINER_REGISTRY_REPOSITORY:$IMAGE_TAG .
