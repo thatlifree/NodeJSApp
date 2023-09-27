@@ -51,6 +51,6 @@ jobs:
     - name: Build and deploy Container App
       uses: azure/container-apps-deploy-action@v1
       with:
-        imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{needs.CI.outputs.endpoint.image}}
+        imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{needs.CI.outputs.image}}
         containerAppName: njsapp
         resourceGroup: FirstSiteFromGit
