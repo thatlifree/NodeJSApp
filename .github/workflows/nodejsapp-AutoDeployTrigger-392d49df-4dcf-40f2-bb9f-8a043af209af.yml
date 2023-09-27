@@ -12,10 +12,11 @@ on:
 
   # Allow manual trigger 
   workflow_dispatch:      
-
 jobs:
   CI:
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build.outputs.IMAGE }}
     permissions: 
       id-token: write #This is required for requesting the OIDC JWT Token
 
@@ -30,13 +31,13 @@ jobs:
           password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build and push container image to registry
+        id: build
         env:
-          CONTAINER_REGISTRY: ${{ secrets.ACR_ENDPOINT }}
-          CONTAINER_REGISTRY_REPOSITORY: app
-          IMAGE_TAG: NodeJSAppExample-${{ env.GITHUB_RUN_ID }}
+          IMAGE: ${{ secrets.ACR_ENDPOINT }}/app:NodeJSAppExample-${{ env.GITHUB_RUN_ID }}
         run: | 
-          docker build -t $CONTAINER_REGISTRY/$CONTAINER_REGISTRY_REPOSITORY:$IMAGE_TAG .
-          docker push $CONTAINER_REGISTRY/$CONTAINER_REGISTRY_REPOSITORY:$IMAGE_TAG
+          docker build -t $IMAGE .
+          docker push $IMAGE
+          echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUT
   CD:
     needs: [CI]
     runs-on: ubuntu-latest
@@ -50,14 +51,7 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - name: 'Deploy to Azure Container Instances'
-      uses: 'azure/aci-deploy@v1'
+    - name: Build and deploy Container App
+      uses: azure/container-apps-deploy-action@v1
       with:
-        resource-group: ${{ secrets.RESOURCE_GROUP }}
-        dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
-        image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/app:${{ github.sha }}
-        registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        registry-username: ${{ secrets.REGISTRY_USERNAME }}
-        registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-        name: app
-        location: 'west us'
+        imageToDeploy: ${{needs.CI.outputs.image}}
