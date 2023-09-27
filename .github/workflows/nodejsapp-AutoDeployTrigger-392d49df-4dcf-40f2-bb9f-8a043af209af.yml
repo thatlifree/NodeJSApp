@@ -33,10 +33,11 @@ jobs:
       - name: Build and push container image to registry
         id: build
         env:
-          IMAGE: ${{ secrets.ACR_ENDPOINT }}/app:NodeJSAppExample-${{ env.GITHUB_RUN_ID }}
+          IMAGE: app:NodeJSAppExample-${{ env.GITHUB_RUN_ID }}
+          ENDPOINT: ${{ secrets.ACR_ENDPOINT }}
         run: | 
-          docker build -t $IMAGE .
-          docker push $IMAGE
+          docker build -t $ENDPOINT/$IMAGE .
+          docker push $ENDPOINT/$IMAGE
           echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUT
   CD:
     needs: [CI]
@@ -50,4 +51,4 @@ jobs:
     - name: Build and deploy Container App
       uses: azure/container-apps-deploy-action@v1
       with:
-        imageToDeploy: ${{needs.CI.outputs.image}}
+        imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{needs.CI.outputs.endpoint.image}}
