@@ -41,11 +41,7 @@ jobs:
   CD:
     needs: [CI]
     runs-on: ubuntu-latest
-    steps:
-    # checkout the repo
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@main
-      
+    steps:      
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
