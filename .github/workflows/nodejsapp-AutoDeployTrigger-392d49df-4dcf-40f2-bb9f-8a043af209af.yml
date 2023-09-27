@@ -52,3 +52,4 @@ jobs:
       uses: azure/container-apps-deploy-action@v1
       with:
         imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{needs.CI.outputs.endpoint.image}}
+        containerAppName: njsapp
