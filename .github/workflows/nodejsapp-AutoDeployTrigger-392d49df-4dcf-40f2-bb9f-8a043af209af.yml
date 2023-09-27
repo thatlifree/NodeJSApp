@@ -53,3 +53,4 @@ jobs:
       with:
         imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{needs.CI.outputs.endpoint.image}}
         containerAppName: njsapp
+        resourceGroup: FirstSiteFromGit
