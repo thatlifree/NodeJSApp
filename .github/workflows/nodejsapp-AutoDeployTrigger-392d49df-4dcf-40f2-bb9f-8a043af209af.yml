@@ -52,5 +52,5 @@ jobs:
       uses: azure/container-apps-deploy-action@v1
       with:
         imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{needs.CI.outputs.image}}
-        containerAppName: njsapp
-        resourceGroup: FirstSiteFromGit
+        containerAppName: ua-ca-test
+        resourceGroup: ua-rg-test
