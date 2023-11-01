@@ -52,7 +52,8 @@ jobs:
       uses: azure/container-apps-deploy-action@v1
       with:
         imageToDeploy: ${{ secrets.ACR_ENDPOINT }}/${{needs.CI.outputs.image}}
-        acrUsername: ${{ secrets.ACR_USERNAME }}
-        acrPassword: ${{ secrets.ACR_PASSWORD }} 
+        registryUrl: ${{ secrets.ACR_ENDPOINT }}
+        registryUsername: ${{ secrets.ACR_USERNAME }}
+        registryPassword: ${{ secrets.ACR_PASSWORD }}
         containerAppName: ua-ca-test
         resourceGroup: ua-rg-test
