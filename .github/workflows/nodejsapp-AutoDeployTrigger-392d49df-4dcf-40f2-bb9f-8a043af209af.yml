@@ -33,7 +33,7 @@ jobs:
       - name: Build and push container image to registry
         id: build
         env:
-          IMAGE: app:NodeJSAppExample-${{ env.GITHUB_RUN_ID }}
+          IMAGE: app:NodeJSAppExample-${{ github.run_id }}
           ENDPOINT: ${{ secrets.ACR_ENDPOINT }}
         run: | 
           docker build -t $ENDPOINT/$IMAGE .
